@@ -69,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'apps.api.request_response_middleware.RequestLogMiddleware',
 ]
 
 if DEBUG:
@@ -206,6 +207,8 @@ else:
     SEQ_URL = f"http://{os.getenv('SEQ_HOST')}:{os.getenv('SEQ_PORT')}"
 
 SEQ_API_KEY = os.getenv("SEQ_API_KEY")
+
+LOGGER = os.getenv("LOGGER")
 
 AUTH_USER_MODEL = 'accounts.User'
 
