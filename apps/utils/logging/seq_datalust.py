@@ -30,7 +30,6 @@ class SeqDataLust(Log):
 
     @staticmethod
     def create_new_event(message: str, level: str, properties: Dict):
-        print(EVENT_URL)
         data = {
             "Events": [
                 {
