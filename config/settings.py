@@ -204,6 +204,8 @@ if DEBUG:
 else:
     SEQ_URL = f"http://{os.getenv('SEQ_HOST')}:{os.getenv('SEQ_PORT')}"
 
+SEQ_API_KEY = os.getenv("SEQ_API_KEY")
+
 
 from config.apps_settings.drf import *
 from config.apps_settings.api_docs import *
