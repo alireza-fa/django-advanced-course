@@ -54,6 +54,7 @@ if DEBUG:
 LOCAL_APPS = [
     'apps.authentication.apps.AuthenticationConfig',
     'apps.common.apps.CommonConfig',
+    'apps.accounts.apps.AccountsConfig',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -206,6 +207,7 @@ else:
 
 SEQ_API_KEY = os.getenv("SEQ_API_KEY")
 
+AUTH_USER_MODEL = 'accounts.User'
 
 from config.apps_settings.drf import *
 from config.apps_settings.api_docs import *
