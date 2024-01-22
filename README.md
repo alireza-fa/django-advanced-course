@@ -52,4 +52,9 @@ REDIS_HOST=redis_bio_host
 REDIS_HOST_DEBUG=localhost
 REDIS_PASSWORD=redis_bio_password
 REDIS_PORT=6388
+
+SEQ_PORT=5341
+SEQ_HOST=seq_private_host
+SEQ_HOST_DEBUG=localhost
+SEQ_API_KEY="..."
 ```
