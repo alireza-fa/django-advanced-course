@@ -1,3 +1,4 @@
+from typing import Dict
 import requests
 from django.utils import timezone
 from django.conf import settings
@@ -15,24 +16,20 @@ class SeqDataLust(Log):
     def __init__(self, api_key: str):
         self.api_key = api_key
 
-    def debug(self, message: str, category: str, sub_category: str):
-        return self.create_new_event(message, level=log_level.DEBUG,
-                                     category=category, sub_category=sub_category)
+    def debug(self, message: str, properties: Dict):
+        return self.create_new_event(message, level=log_level.DEBUG, properties=properties)
 
-    def info(self, message: str, category: str, sub_category: str):
-        return self.create_new_event(message=message, level=log_level.INFO,
-                                     category=category, sub_category=sub_category)
+    def info(self, message: str, properties: Dict):
+        return self.create_new_event(message=message, level=log_level.INFO, properties=properties)
 
-    def warn(self, message: str, category: str, sub_category: str):
-        return self.create_new_event(message=message, level=log_level.WARN,
-                                     category=category, sub_category=sub_category)
+    def warn(self, message: str, properties: Dict):
+        return self.create_new_event(message=message, level=log_level.WARN, properties=properties)
 
-    def error(self, message: str, category: str, sub_category: str):
-        return self.create_new_event(message=message, level=log_level.ERROR,
-                                     category=category, sub_category=sub_category)
+    def error(self, message: str, properties: Dict):
+        return self.create_new_event(message=message, level=log_level.ERROR, properties=properties)
 
     @staticmethod
-    def create_new_event(message, level, category, sub_category):
+    def create_new_event(message: str, level: str, properties: Dict):
         print(EVENT_URL)
         data = {
             "Events": [
@@ -40,7 +37,7 @@ class SeqDataLust(Log):
                     "Level": level,
                     "MessageTemplate": message,
                     "Timestamp": str(timezone.now()),
-                    "Properties": {"Category": category, "SubCategory": sub_category}
+                    "Properties": {**properties}
                 }
             ]
         }

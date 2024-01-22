@@ -1,19 +1,20 @@
 from abc import ABC, abstractmethod
+from typing import Dict
 
 
 class Log(ABC):
     @abstractmethod
-    def debug(self, message: str, category: str, sub_category: str):
+    def debug(self, message: str, properties: Dict):
         pass
 
     @abstractmethod
-    def info(self, message: str, category: str, sub_category: str):
+    def info(self, message: str, properties: Dict):
         pass
 
     @abstractmethod
-    def warn(self, message: str, category: str, sub_category: str):
+    def warn(self, message: str, properties: Dict):
         pass
 
     @abstractmethod
-    def error(self, message: str, category: str, sub_category: str):
+    def error(self, message: str, properties: Dict):
         pass
