@@ -38,12 +38,16 @@ services:
 
   seq:
     image: datalust/seq:latest
+    container_name: seq_project_container
+    hostname: ${SEQ_HOST}
     ports:
-      - "5341:80"
+      - ${SEQ_PORT}:80
     environment:
       ACCEPT_EULA: "Y"
     volumes:
       - ./data/project/seq:/data
+    networks:
+      - main_project_network
 
 
 networks:

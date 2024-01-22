@@ -199,6 +199,11 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+if DEBUG:
+    SEQ_URL = f"http://{os.getenv('SEQ_HOST_DEBUG')}:{os.getenv('SEQ_PORT')}"
+else:
+    SEQ_URL = f"http://{os.getenv('SEQ_HOST')}:{os.getenv('SEQ_PORT')}"
+
 
 from config.apps_settings.drf import *
 from config.apps_settings.api_docs import *
