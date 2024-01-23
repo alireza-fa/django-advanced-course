@@ -92,6 +92,8 @@ def user_login_func(request: HttpRequest, phone_number: str) -> None:
 
     set_user_login_cache(client_info=client_info, code=code, phone_number=phone_number)
 
+    print(code)
+
     # TODO: send sms
 
 
@@ -108,6 +110,8 @@ def user_register_func(request: HttpRequest, phone_number: str, fullname: str,
     set_user_register_cache(
         client_info=client_info, code=code, phone_number=phone_number,
         fullname=fullname, email=email)
+
+    print(code)
 
     # TODO: send sms
 # ============ End User Login And Register ===========================================
@@ -192,6 +196,8 @@ def user_resend_func(phone_number: str, request: HttpRequest) -> None:
         raise PermissionError('access denied.')
 
     set_user_resend_cache(code=code, **user_info)
+
+    print(code)
 
     # TODO: send sms
 # ============ End resend verify message ========================
