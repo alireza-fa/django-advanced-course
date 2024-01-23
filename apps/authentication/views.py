@@ -11,6 +11,8 @@ from .serializers import (UserLoginSerializer, UserRegisterSerializer,
 from .services import (user_login_func, user_register_func, user_verify_func,
                        user_resend_func, refresh_token_func, check_verify_token_func,
                        user_logout_func,)
+from apps.api.response import base_response, base_response_with_validation_error, base_response_with_error
+from apps.api import response_code
 
 
 class UserLoginView(APIView):
@@ -53,13 +55,17 @@ class UserRegisterView(APIView):
     @extend_schema(request=UserRegisterSerializer, responses=None)
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        vd = serializer.validated_data
-        try:
-            user_register_func(request=request, phone_number=vd['phone_number'], fullname=vd['fullname'])
-        except PermissionError:
-            return Response(data={"detail": _('Please try again later.')}, status=status.HTTP_406_NOT_ACCEPTABLE)
-        return Response(status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            vd = serializer.validated_data
+            try:
+                user_register_func(request=request, phone_number=vd['phone_number'], fullname=vd['fullname'])
+            except PermissionError:
+                return base_response_with_error(status_code=status.HTTP_429_TOO_MANY_REQUESTS, success=False,
+                                                code=response_code.TOO_MANY_REQUEST_OTP_CODE)
+            return base_response(status_code=status.HTTP_200_OK, success=True, code=response_code.OK)
+
+        return base_response_with_validation_error(status_code=status.HTTP_400_BAD_REQUEST, success=False,
+                                                   code=response_code.BAD_REQUEST, error=serializer.errors)
 
 
 class UserVerifyView(APIView):
@@ -76,13 +82,17 @@ class UserVerifyView(APIView):
     @extend_schema(request=UserVerifySerializer, responses=UserVerifyResponseSerializer)
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        vd = serializer.validated_data
-        try:
-            data = user_verify_func(request=request, code=vd['code'], phone_number=vd['phone_number'])
-        except ValueError:
-            return Response(data={"detail": _('Invalid code')}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(data=data, status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            vd = serializer.validated_data
+            try:
+                data = user_verify_func(request=request, code=vd['code'], phone_number=vd['phone_number'])
+            except ValueError:
+                return base_response_with_error(status_code=status.HTTP_406_NOT_ACCEPTABLE, success=False,
+                                                code=response_code.INVALID_OTP)
+            return base_response(status_code=status.HTTP_200_OK, success=True, code=response_code.OK, result=data)
+
+        return base_response_with_validation_error(status_code=status.HTTP_400_BAD_REQUEST, success=False,
+                                                   code=response_code.BAD_REQUEST, error=serializer.errors)
 
 
 class ResendVerifyMessage(APIView):
