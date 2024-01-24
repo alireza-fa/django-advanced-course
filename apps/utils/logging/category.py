@@ -7,6 +7,5 @@ RequestResponse = 'requestResponse'
 Select = "select"
 Rollback = "rollback"
 Update = "update"
-Rollback = "rollback"
 
 API = "api"
