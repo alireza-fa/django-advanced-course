@@ -33,12 +33,16 @@ class UserLoginView(APIView):
     @extend_schema(request=UserLoginSerializer, responses=None)
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        try:
-            user_login_func(request=request, phone_number=serializer.validated_data['phone_number'])
-        except PermissionError:
-            return Response(data={"detail": _('Please try again later')}, status=status.HTTP_406_NOT_ACCEPTABLE)
-        return Response(status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            try:
+                user_login_func(request=request, phone_number=serializer.validated_data['phone_number'])
+            except PermissionError:
+                return base_response_with_error(status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                                                success=False, code=response_code.TOO_MANY_REQUEST_OTP_CODE)
+            return base_response(status_code=status.HTTP_200_OK, success=True, code=response_code.OK)
+
+        return base_response_with_validation_error(status_code=status.HTTP_400_BAD_REQUEST, success=False,
+                                                   code=response_code.BAD_REQUEST, error=serializer.errors)
 
 
 class UserRegisterView(APIView):
@@ -110,12 +114,17 @@ class ResendVerifyMessage(APIView):
     @extend_schema(request=ResendVerifyMessageSerializer, responses=None)
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        try:
-            user_resend_func(request=request, phone_number=serializer.validated_data['phone_number'])
-        except PermissionError:
-            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
-        return Response(status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            try:
+                user_resend_func(request=request, phone_number=serializer.validated_data['phone_number'])
+            except PermissionError:
+                return base_response_with_error(status_code=status.HTTP_406_NOT_ACCEPTABLE, success=False,
+                                                code=response_code.INVALID_OTP)
+            return base_response(status_code=status.HTTP_200_OK, success=True, code=response_code.OK)
+
+        return base_response_with_validation_error(
+            status_code=status.HTTP_400_BAD_REQUEST, success=False,
+            code=response_code.BAD_REQUEST, error=serializer.errors)
 
 
 class JwtRefreshView(APIView):
@@ -133,16 +142,19 @@ class JwtRefreshView(APIView):
     @extend_schema(request=RefreshTokenSerializer, responses=AccessTokenSerializer)
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        try:
-            access_token = refresh_token_func(
-                request=request,
-                encrypted_refresh_token=serializer.validated_data['refresh_token'])
-        except ValueError:
-            return Response(
-                data={"refresh_token": _('Invalid refresh token.')},
-                status=status.HTTP_400_BAD_REQUEST)
-        return Response(data={"access_token": access_token}, status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            try:
+                access_token = refresh_token_func(
+                    request=request,
+                    encrypted_refresh_token=serializer.validated_data['refresh_token'])
+            except ValueError:
+                return base_response_with_error(status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                                                success=False, code=response_code.INVALID_REFRESH_TOKEN)
+            return base_response(status_code=status.HTTP_200_OK, success=True,
+                                 code=response_code.OK, result={"access_token": access_token})
+
+        return base_response_with_validation_error(status_code=status.HTTP_400_BAD_REQUEST, success=False,
+                                                   code=response_code.BAD_REQUEST, error=serializer.errors)
 
 
 class JwtVerifyView(APIView):
@@ -156,12 +168,16 @@ class JwtVerifyView(APIView):
     @extend_schema(request=TokenSerializer, responses=None)
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        check = check_verify_token_func(
-            request=request, encrypted_token=serializer.validated_data['token'])
-        if check is False:
-            return Response(data={"token": _('Invalid token')}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            check = check_verify_token_func(
+                request=request, encrypted_token=serializer.validated_data['token'])
+            if check is False:
+                return base_response_with_error(status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                                                success=False, code=response_code.INVALID_TOKEN)
+            return base_response(status_code=status.HTTP_200_OK, success=True, code=response_code.OK)
+
+        return base_response_with_validation_error(status_code=status.HTTP_400_BAD_REQUEST, success=False,
+                                                   code=response_code.BAD_REQUEST, error=serializer.errors)
 
 
 class UserLogoutView(APIView):
@@ -179,9 +195,13 @@ class UserLogoutView(APIView):
     @extend_schema(request=RefreshTokenSerializer, responses=None)
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        try:
-            user_logout_func(request=request, encrypted_token=serializer.validated_data['token'])
-        except ValueError:
-            return Response(data={"token": _('Invalid token.')}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if serializer.is_valid():
+            try:
+                user_logout_func(request=request, encrypted_token=serializer.validated_data['token'])
+            except ValueError:
+                return base_response_with_error(status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                                                success=False, code=response_code.INVALID_TOKEN)
+            return base_response(status_code=status.HTTP_204_NO_CONTENT, success=True, code=response_code.NO_CONTENT)
+
+        return base_response_with_validation_error(status_code=status.HTTP_400_BAD_REQUEST, success=False,
+                                                   code=response_code.BAD_REQUEST, error=serializer.errors)
