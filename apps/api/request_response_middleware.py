@@ -1,8 +1,10 @@
 import time
 
-from apps.utils.logging.logger import get_logger, get_request_response_properties
+from apps.utils.logging.logger import new_logger
+from apps.utils.logging import category
 
-logger = get_logger()
+
+logger = new_logger()
 
 
 class RequestLogMiddleware:
@@ -18,9 +20,17 @@ class RequestLogMiddleware:
 
         response_time = round((end_time - start_time) * 1000)
 
-        properties = get_request_response_properties(response_time=f"{response_time}ms", method=request.method,
-                                                     status_code=response.status_code, path=request.path)
-        logger.info(message=f"[{request.method}:{response.status_code}] {request.path} | {response_time}ms",
-                    properties=properties)
+        properties = {
+            "Category": category.RequestResponse,
+            "SubCategory": category.API,
+            "Method": request.method,
+            "ResponseTime": response_time,
+            "Path": request.path,
+            "StatusCode": response.status_code
+        }
+        logger.info(
+            message=f"[{request.method}] {request.path} | {response_time}ms",
+            properties=properties
+        )
 
         return response

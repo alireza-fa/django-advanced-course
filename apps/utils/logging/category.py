@@ -1,11 +1,14 @@
 GENERAL = "general"
-Postgres = "postgres"
+POSTGRESQL = "postgres"
 Redis = "redis"
 Validation = "validation"
 RequestResponse = 'requestResponse'
 
-Select = "select"
-Rollback = "rollback"
-Update = "update"
-
 API = "api"
+
+# SubCategory
+INSERT = "insert"
+UPDATE = "update"
+DELETE = "delete"
+SELECT = "select"
+Rollback = "rollback"

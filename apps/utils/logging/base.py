@@ -1,5 +1,5 @@
-from abc import ABC, abstractmethod
 from typing import Dict
+from abc import ABC, abstractmethod
 
 
 class Log(ABC):

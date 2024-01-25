@@ -1,4 +1,4 @@
 DEBUG = "debug"
 INFO = "info"
-WARN = "warning"
+WARN = "warn"
 ERROR = "error"

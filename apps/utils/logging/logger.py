@@ -1,20 +1,9 @@
 from django.conf import settings
 
-from .seq_datalust import SeqDataLust
-from . import category
+from apps.utils.logging.seq.logger import SeqDataLust
 
 
-def get_logger():
-    logger_name = settings.LOGGER
-
-    match logger_name:
+def new_logger():
+    match settings.LOGGER:
         case "seq":
-            return SeqDataLust(settings.SEQ_API_KEY)
-
-
-def get_request_response_properties(**kwargs):
-    return {
-        "Category": category.RequestResponse,
-        "SubCategory": category.API,
-        **kwargs
-    }
+            return SeqDataLust(api_key=settings.SEQ_API_KEY, base_url=settings.SEQ_BASE_URL)
