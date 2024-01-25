@@ -57,4 +57,6 @@ SEQ_PORT=5341
 SEQ_HOST=seq_private_host
 SEQ_HOST_DEBUG=localhost
 SEQ_API_KEY="..."
+
+LOGGER=seq
 ```
