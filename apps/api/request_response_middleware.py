@@ -2,6 +2,7 @@ import time
 
 from apps.utils.logging.logger import new_logger
 from apps.utils.logging import category
+from apps.common.tasks import log_info
 
 
 logger = new_logger()
@@ -28,9 +29,10 @@ class RequestLogMiddleware:
             "Path": request.path,
             "StatusCode": response.status_code
         }
-        logger.info(
-            message=f"[{request.method}] {request.path} | {response_time}ms",
-            properties=properties
-        )
+        # logger.info(
+        #     message=f"[{request.method}] {request.path} | {response_time}ms",
+        #     properties=properties
+        # )
+        log_info.delay(f"[{request.method}] {request.path} | {response_time}ms", properties)
 
         return response
