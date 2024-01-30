@@ -201,16 +201,24 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+AUTH_USER_MODEL = 'accounts.User'
+
 if DEBUG:
-    SEQ_URL = f"http://{os.getenv('SEQ_HOST_DEBUG')}:{os.getenv('SEQ_PORT')}"
+    SEQ_BASE_URL = f"http://{os.getenv('SEQ_HOST_DEBUG')}:{os.getenv('SEQ_PORT')}"
 else:
-    SEQ_URL = f"http://{os.getenv('SEQ_HOST')}:{os.getenv('SEQ_PORT')}"
+    SEQ_BASE_URL = f"http://{os.getenv('SEQ_HOST')}:{os.getenv('SEQ_PORT')}"
 
 SEQ_API_KEY = os.getenv("SEQ_API_KEY")
 
 LOGGER = os.getenv("LOGGER")
 
-AUTH_USER_MODEL = 'accounts.User'
+if DEBUG:
+    RABBITMQ_CONNECTION = (f"amqp://{os.getenv('RABBITMQ_USER')}:{os.getenv('RABBITMQ_PASS')}@"
+                           f"{os.getenv('RABBITMQ_HOST_DEBUG')}:{os.getenv('RABBITMQ_PORT')}")
+else:
+    RABBITMQ_CONNECTION = (f"amqp://{os.getenv('RABBITMQ_USER')}:{os.getenv('RABBITMQ_PASS')}@"
+                           f"{os.getenv('RABBITMQ_HOST')}:{os.getenv('RABBITMQ_PORT')}")
+
 
 from config.apps_settings.drf import *
 from config.apps_settings.api_docs import *

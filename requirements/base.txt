@@ -11,3 +11,4 @@ gevent==23.9.1
 django-debug-toolbar==4.2.0
 requests==2.31.0
 pycryptodome==3.20.0
+celery==5.3.6
