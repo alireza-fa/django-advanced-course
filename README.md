@@ -57,4 +57,12 @@ SEQ_HOST_DEBUG=localhost
 SEQ_API_KEY="..."
 
 LOGGER=seq
+
+RABBITMQ_HOST=rabbit_host
+RABBITMQ_HOST_DEBUG=localhost
+RABBITMQ_USER=rabbit_user
+RABBITMQ_PASS=rabbit_pass
+RABBITMQ_PORT=5672
+RABBITMQ_PORT_DEBUG=5677
+RABBITMQ_CONNECTION=amqp://rabbit_user:rabbit_pass@rabbit_host:rabbit_port
 ```
